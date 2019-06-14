@@ -15,8 +15,6 @@ using System.Drawing;
 using JuddBot.Preconditions;
 using System.Net;
 using Color = Discord.Color;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 
 namespace JuddBot.Modules.Splatoon
 {
@@ -85,9 +83,6 @@ namespace JuddBot.Modules.Splatoon
                     stage = Directory.GetFiles("./Images/Splatoon/", "*.png").Where(x => x.Replace("./Images/Splatoon/", "") != rankedService.LastMap[Context.User.Id]).OrderBy(x => asdf.Next()).FirstOrDefault();
                 }
 
-                var image = System.Drawing.Image.FromFile(stage);
-                Bitmap scaledImage = ResizeImage(image, image.Width / 4, image.Height / 4);
-
                 stage = stage.Replace("./Images/Splatoon/", "");
                 rankedService.LastMap[Context.User.Id] = stage;
                 string stageName = stage.Replace('_', ' ').Substring(0, stage.IndexOf('.'));
@@ -111,14 +106,7 @@ namespace JuddBot.Modules.Splatoon
                 
                 rankedService.Cooldown[Context.User.Id] = DateTimeOffset.Now;
 
-                //await Context.Channel.SendFileAsync($"./Images/Splatoon/{stage}", embed: builder.Build());
-
-                using (var stream = new MemoryStream())
-                {
-                    scaledImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                    stream.Position = 0;
-                    await Context.Channel.SendFileAsync(stream, stage, embed: builder.Build());
-                }
+                await Context.Channel.SendFileAsync($"./Images/Splatoon/{stage}", embed: builder.Build());
             }
             catch (Exception ex)
             {
@@ -139,32 +127,6 @@ namespace JuddBot.Modules.Splatoon
 
                 return;
             }
-        }
-
-
-        public static Bitmap ResizeImage(System.Drawing.Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-
-            return destImage;
         }
     }
 }
