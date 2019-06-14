@@ -35,10 +35,16 @@ namespace JuddBot.Modules.Splatoon
         }
         
         [Command("map", RunMode = RunMode.Async)]
+        [Alias("ranked")]
         [Summary("Pick a map!")]
         [Priority(1000)]
         public async Task SelectMap()
         {
+            bool ranked = false;
+
+            if (Context.Message.Content.ToLower().Contains("ranked") && !Context.Message.Content.ToLower().Contains("map"))
+                ranked = true;
+
             try
             { 
                 if (rankedService.Cooldown.ContainsKey(Context.User.Id) && rankedService.Cooldown[Context.User.Id] > DateTimeOffset.Now.AddMinutes(-1))
@@ -92,13 +98,16 @@ namespace JuddBot.Modules.Splatoon
                 string multiplier = "";
 
                 if (asdf.Next(0, 100) < 10)
-                    multiplier = $" __**2x Battle**__";
+                    multiplier = $"__**2x Battle**__";
 
                 EmbedBuilder builder = new EmbedBuilder();
 
                 builder.ThumbnailUrl = $"attachment://{stage}";
                 //builder.Title = stageName;
-                builder.AddField(stageName, $"**Mode:** Turfwar{multiplier}", true);
+                if (!ranked)
+                    builder.AddField(stageName, $"**Mode:** Turfwar\n{multiplier}", true);
+                else
+                    builder.AddField(stageName, $"**Mode:** {rankedService.GetRankedMode()}\n{multiplier}", true);
                 builder.Timestamp = DateTimeOffset.Now;
 
                 builder.WithFooter($"Requested by {(Context.User as IGuildUser).Nickname ?? Context.User.Username}#{Context.User.Discriminator}", Context.User.GetAvatarUrl() ?? Context.User.GetDefaultAvatarUrl());

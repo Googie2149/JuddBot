@@ -23,6 +23,25 @@ namespace JuddBot.Modules.Splatoon
         Dictionary<string, Schedule> eventList = new Dictionary<string, Schedule>();
         string currentEvent = "";
 
+        public Dictionary<ulong, string> LastMap = new Dictionary<ulong, string>();
+
+        public RankedService(DiscordSocketClient _socketClient, Config _config, DiscordRestClient _restClient)
+        {
+            socketClient = _socketClient;
+            restClient = _restClient;
+            config = _config;
+
+            socketClient.MessageReceived += SocketClient_MessageReceived;
+
+            foreach (var file in Directory.GetFiles("schedules"))
+            {
+                var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
+
+                if (temp.StartTime > DateTimeOffset.Now)
+                    eventList.Add(temp.StartTime.ToString("yyyy-MM-dd HH:mm"), temp);
+            }
+        }
+
         public string GetRankedMode()
         {
             if (currentEvent == "")
@@ -77,25 +96,21 @@ namespace JuddBot.Modules.Splatoon
             //int rotation = time.Hour % 4;
         }
 
-        public Dictionary<ulong, string> LastMap = new Dictionary<ulong, string>();
         public Dictionary<ulong, DateTimeOffset> Cooldown = new Dictionary<ulong, DateTimeOffset>();
 
-        public RankedService(DiscordSocketClient _socketClient, Config _config, DiscordRestClient _restClient)
-        {
-            socketClient = _socketClient;
-            restClient = _restClient;
-            config = _config;
 
-            socketClient.MessageReceived += SocketClient_MessageReceived;
+        //public TimeSpan GetNextRotationTime()
+        //{
+        //    var tmp = new TimeSpan();
 
-            foreach (var file in Directory.GetFiles("schedules"))
-            {
-                var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
+        //    var schedule = eventList[currentEvent];
 
-                if (temp.StartTime > DateTimeOffset.Now)
-                    eventList.Add(temp.StartTime.ToString("yyyy-MM-dd HH:mm"), temp);
-            }
-        }
+        //    TimeSpan somethingWithTimeInTheName = DateTimeOffset.Now - schedule.StartTime;
+
+        //    var rotation = somethingWithTimeInTheName.Hours / schedule.RotationLength;
+
+        //    return tmp;
+        //}
 
         private async Task SocketClient_MessageReceived(SocketMessage msg)
         {
