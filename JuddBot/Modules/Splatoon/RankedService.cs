@@ -59,6 +59,7 @@ namespace JuddBot.Modules.Splatoon
 
                 currentEvent = values.FirstOrDefault().Key;
 
+
                 //return "Something broke and I don't know what you should play! Yell at the developer until they fix it!";
             }
             else if (currentEvent == "nop")
