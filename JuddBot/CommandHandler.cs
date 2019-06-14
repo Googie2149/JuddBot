@@ -29,7 +29,7 @@ namespace JuddBot
             //_map.Add(commands);
             services = _services;
             config = _services.GetService<Config>();
-            
+
             await commands.AddModulesAsync(Assembly.GetEntryAssembly(), services);
 
             //await HelpModule.Install(commands);
@@ -42,6 +42,7 @@ namespace JuddBot
             // Don't handle the command if it is a system message
             var message = parameterMessage as SocketUserMessage;
             if (message == null) return;
+            if (message.Author.IsBot) return;
 
             // Mark where the prefix ends and the command begins
             int argPos = 0;
@@ -50,8 +51,7 @@ namespace JuddBot
             if (!ParseTriggers(message, ref argPos)) return;
 
             // Create a Command Context
-            //var context = new MinitoriContext(client, message);
-            var context = new CommandContext(client, message);
+            var context = new MinitoriContext(client, message);
             // Execute the Command, store the result
             var result = await commands.ExecuteAsync(context, argPos, services);
 
@@ -76,7 +76,7 @@ namespace JuddBot
                             break;
                         default:
                             await message.Channel.SendMessageAsync($"**Something went wrong:** `{result.ErrorReason}`\n" +
-                                $"Poke Gardevoir#2149 about it if the reason doesn't make sense.");
+                                $"Poke Suiseiseki#5159 about it if the reason doesn't make sense.");
                             Console.WriteLine($"{result.ErrorReason}");
                             break;
                     }

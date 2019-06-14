@@ -52,10 +52,12 @@ namespace JuddBot.Modules.Standard
                 (scale / (double)uint.MaxValue));
         }
 
-        [Command("ping")]
-        public async Task Ping()
+        [Command("blah")]
+        [Summary("Blah!")]
+        [Priority(1000)]
+        public async Task Blah()
         {
-            await ReplyAsync("Blah");
+            await RespondAsync($"Blah to you too, {Context.User.Mention}.");
         }
 
         [Command("help")]
