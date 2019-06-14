@@ -33,19 +33,34 @@ namespace JuddBot.Modules.Splatoon
 
             socketClient.MessageReceived += SocketClient_MessageReceived;
 
-            foreach (var file in Directory.GetFiles("schedules"))
+            if (Directory.GetFiles("schedules").Length > 0)
             {
-                var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
+                foreach (var file in Directory.GetFiles("schedules"))
+                {
+                    var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
 
-                if (temp.StartTime > DateTimeOffset.Now)
-                    eventList.Add(temp.StartTime.ToString("yyyy-MM-dd HH:mm"), temp);
+                    if (temp.StartTime > DateTimeOffset.Now)
+                        eventList.Add(temp.StartTime.ToString("yyyy-MM-dd HH:mm"), temp);
+                }
             }
         }
 
         public string GetRankedMode()
         {
             if (currentEvent == "")
-                return "Something broke and I don't know what you should play! Yell at the developer until they fix it!";
+            {
+                var values = eventList.Where(x => x.Value.StartTime > DateTimeOffset.Now).OrderBy(x => x.Key).ToList();
+
+                if (values.Count() == 0)
+                {
+                    currentEvent = "nop";
+                    return "There are no scheduled events at this time.";
+                }
+
+                currentEvent = values.FirstOrDefault().Key;
+
+                //return "Something broke and I don't know what you should play! Yell at the developer until they fix it!";
+            }
             else if (currentEvent == "nop")
                 return "There are no scheduled events at this time.";
 
