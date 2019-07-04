@@ -39,7 +39,7 @@ namespace JuddBot.Modules.Splatoon
                 {
                     var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
 
-                    if (temp.StartTime.AddHours(temp.RotationLength * temp.Modes.Length) > DateTimeOffset.Now)
+                    if (temp.StartTime.AddHours(temp.Duration) > DateTimeOffset.Now)
                         eventList.Add(temp.StartTime.ToUniversalTime().ToString("yyyy-MM-dd HH:mm"), temp);
                 }
             }
@@ -72,7 +72,7 @@ namespace JuddBot.Modules.Splatoon
         {
             if (currentEvent == "")
             {
-                var values = eventList.Where(x => x.Value.StartTime > DateTimeOffset.Now).OrderBy(x => x.Key).ToList();
+                var values = eventList.Where(x => x.Value.StartTime.AddHours(x.Value.Duration) > DateTimeOffset.Now).OrderBy(x => x.Key).ToList();
 
                 if (values.Count() == 0)
                 {
@@ -98,7 +98,7 @@ namespace JuddBot.Modules.Splatoon
                 // The previous event ended, move on
                 eventList.Remove(currentEvent);
 
-                var values = eventList.Where(x => x.Value.StartTime > DateTimeOffset.Now).OrderBy(x => x.Key).ToList();
+                var values = eventList.Where(x => x.Value.StartTime.AddHours(x.Value.Duration) > DateTimeOffset.Now).OrderBy(x => x.Key).ToList();
 
                 if (values.Count() == 0)
                 {
