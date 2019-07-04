@@ -246,7 +246,8 @@ namespace JuddBot.Modules.Splatoon
                             {
                                 eventList.Add(tempSchedule.StartTime.ToString("yyyy-MM-dd HH:mm"), tempSchedule);
 
-                                await JsonStorage.SerializeObjectToFile(tempSchedule, $"schedules/filename");
+                                await JsonStorage.SerializeObjectToFile(tempSchedule, $"schedules/{filename}");
+                                await msg.Channel.SendMessageAsync("Added!");
                             }
                         }
                     }
