@@ -40,7 +40,7 @@ namespace JuddBot.Modules.Splatoon
                     var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
 
                     if (temp.StartTime.AddHours(temp.RotationLength * temp.Modes.Length) > DateTimeOffset.Now)
-                        eventList.Add(temp.StartTime.ToString("yyyy-MM-dd HH:mm"), temp);
+                        eventList.Add(temp.StartTime.ToUniversalTime().ToString("yyyy-MM-dd HH:mm"), temp);
                 }
             }
         }
@@ -61,7 +61,9 @@ namespace JuddBot.Modules.Splatoon
             {
                 output.AppendLine($"{e.Key} | Duration: {e.Value.Duration}, RotationLength: {e.Value.RotationLength}, Rotations: {e.Value.Modes.Length}");
             }
-            output.Append("```");
+            output.Append("```\n");
+
+            output.Append($"Current Event: {currentEvent}");
 
             return output.ToString();
         }
