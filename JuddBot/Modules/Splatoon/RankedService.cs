@@ -39,7 +39,7 @@ namespace JuddBot.Modules.Splatoon
                 {
                     var temp = JsonStorage.DeserializeObjectFromFile<Schedule>(file);
 
-                    if (temp.StartTime > DateTimeOffset.Now)
+                    if (temp.StartTime.AddHours(temp.RotationLength * temp.Modes.Length) > DateTimeOffset.Now)
                         eventList.Add(temp.StartTime.ToString("yyyy-MM-dd HH:mm"), temp);
                 }
             }
