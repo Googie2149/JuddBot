@@ -34,6 +34,12 @@ namespace JuddBot.Modules.Splatoon
             config = _config;
         }
         
+        [Command("debug")]
+        public async Task DebugMessage()
+        {
+            await ReplyAsync(rankedService.DebugOutput());
+        }
+
         [Command("map", RunMode = RunMode.Async)]
         [Alias("ranked")]
         [Summary("Pick a map!")]

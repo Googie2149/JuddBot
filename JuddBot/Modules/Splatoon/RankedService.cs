@@ -45,6 +45,27 @@ namespace JuddBot.Modules.Splatoon
             }
         }
 
+        public string DebugOutput()
+        {
+            StringBuilder output = new StringBuilder();
+
+            output.Append("Files:\n```");
+            foreach (var f in Directory.GetFiles("schedules"))
+            {
+                output.AppendLine(f);
+            }
+            output.Append("```\n");
+
+            output.Append($"Active/Upcoming Events: {eventList.Count()}\n```");
+            foreach (var e in eventList)
+            {
+                output.AppendLine($"{e.Key} | Duration: {e.Value.Duration}, RotationLength: {e.Value.RotationLength}, Rotations: {e.Value.Modes.Length}");
+            }
+            output.Append("```");
+
+            return output.ToString();
+        }
+
         public string GetRankedMode()
         {
             if (currentEvent == "")
