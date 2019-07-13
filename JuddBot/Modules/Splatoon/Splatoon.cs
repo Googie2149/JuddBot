@@ -103,8 +103,19 @@ namespace JuddBot.Modules.Splatoon
 
                 string multiplier = "";
 
-                if (asdf.Next(0, 100) < 10)
-                    multiplier = $"__**2x Battle**__";
+                if (!ranked)
+                {
+                    if (asdf.Next(0, 100) < 10)
+                        multiplier = $"__**2x Battle**__";
+                }
+                else
+                {
+                    int rand = asdf.Next(0, 100);
+                    if (rand < 10)
+                        multiplier = $"__**5x Battle**__";
+                    else if (rand >= 10 && rand < 15)
+                        multiplier = $"__**10x Battle**__";
+                }
 
                 EmbedBuilder builder = new EmbedBuilder();
 
